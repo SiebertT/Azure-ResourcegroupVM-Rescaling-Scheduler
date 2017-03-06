@@ -20,23 +20,27 @@ Note: Downtime of +- 4 minutes applies when the job starts.
 
 # Steps for deployment
 
-1. Import the .ps1 from this GitHub Repository or from [here](https://gallery.technet.microsoft.com/scriptcenter/Scheduled-VM-Resizes-with-2d74c45b?redir=0)
-2. Create an Azure Automation Account
-3. Create your Assets (Automation -> Assets -> Credentials/Variables)
+## Import the .ps1
+You can do this from this GitHub Repository or from [here](https://gallery.technet.microsoft.com/scriptcenter/Scheduled-VM-Resizes-with-2d74c45b?redir=0)
+
+## Create an Azure Automation Account
+![](https://i.gyazo.com/1e4913186e2d91c84bfeda1f3651d0bf.png)
+
+## Create your Assets (Automation -> Assets -> Credentials/Variables)
 
 ![](https://i.gyazo.com/4408fbc846c0cfcdddf35df68e9f7aee.png)
 
 ![](https://i.gyazo.com/c255842c4a2ca85ece941e56eb48bff8.png)
 
-4. Fill in your credentials in the code by using the "edit" button at the Runbook overview
+## Fill in your credentials in the code by using the "edit" button at the Runbook overview
 
 ![](https://i.gyazo.com/622e0138f0f9bbfaf05ad26954cf4338.png)
 
-5. Create a schedule(s) and add the correct parameters
+## Create a schedule(s) and add the correct parameters
 
 ![](https://i.gyazo.com/a75ddf1cf0c02f75c26214d4d6496ede.png)
 
-6. Enjoy your automation! :)
+## Enjoy your automation! :)
 
 # Codeblock
 
