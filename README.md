@@ -1,0 +1,1 @@
+# Azure-Resourcegroup-Rescaling-Scheduler
