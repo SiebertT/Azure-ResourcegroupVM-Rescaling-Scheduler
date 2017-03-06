@@ -1,4 +1,4 @@
-# Azure Resourcegroup Rescaling Scheduler
+# Azure Resourcegroup VM Rescaling Scheduler
 
 Through this Automation script you can schedule a specific Resource Group Azure VM at specific times for resizing.
 
