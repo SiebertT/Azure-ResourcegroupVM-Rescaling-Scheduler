@@ -6,9 +6,8 @@ Through this Automation script you can schedule a specific Resource Group Azure 
 
 It is suggested that you run 2 schedules, for example:
 
-At night hours, downscale to the lowest VM size for cost reasons.
-
-At the start of office hours, upscale to the usual size for productivity.
+* At night hours, downscale to the lowest VM size for cost reasons.
+* At the start of office hours, upscale to the usual size for productivity.
 
 
 
