@@ -175,7 +175,7 @@ workflow VMScheduledScaler
 # Output current VM Size
     $currentVMSize = $vm.HardwareProfile.vmSize
 
-    Write-Output "`nFound the specified Virtual Machine: $VmName"
+    Write-Output "`nFound the specified Virtual Machine: $Using:VirtualMachineName"
     Write-Output "Current size: $currentVMSize"
 
 # Change to new VM Size and report
