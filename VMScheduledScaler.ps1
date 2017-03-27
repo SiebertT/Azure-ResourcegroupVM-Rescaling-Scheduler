@@ -1,22 +1,22 @@
 ﻿<#
 .SYNOPSIS
-Through this Automation script you can schedule a specific Resource Group Azure VM at specific times for resizing.
-
-
-
-It is suggested that you run 2 schedules, for example:
-
-At night hours, downscale to the lowest VM size for cost reasons.
-
-At the start of office hours, upscale to the usual size for productivity.
-
-
-
-This script is highly based on Kay Singh's script for Vertical Scaling, I added scheduling variables for practical use.
-
-Check his Runbook here: https://docs.microsoft.com/en-us/azure/virtual-machines/virtual-machines-linux-vertical-scaling-automation
-
-Note: Downtime of +- 4 minutes applies when the job starts.
+Through this Automation script you can schedule a specific Resource Group Azure VM at specific times for resizing. 
+ 
+ 
+ 
+It is suggested that you run 2 schedules, for example: 
+ 
+At night hours, downscale to the lowest VM size for cost reasons. 
+ 
+At the start of office hours, upscale to the usual size for productivity. 
+ 
+ 
+ 
+This script is highly based on Kay Singh's script for Vertical Scaling, I added scheduling variables for practical use. 
+ 
+Check his Runbook here: https://docs.microsoft.com/en-us/azure/virtual-machines/virtual-machines-linux-vertical-scaling-automation 
+ 
+Note: Downtime of +- 4 minutes applies when the job starts. 
 
 .DESCRIPTION
    This script will adjust the size of a Microsoft Azure virtual machine based on input given into the new schedule.
@@ -26,7 +26,7 @@ Note: Downtime of +- 4 minutes applies when the job starts.
    * The Resource Group name of the VM that is to be changed
    * The name of the VM that is to be changed
 
-   Below in the script at lines 78 and 80 you are required to declare:
+   Below in the script at lines 120 and 122 you are required to declare:
    * A Credentials Asset
    * A Variable Asset with the Subscription ID in it
 
@@ -81,8 +81,8 @@ NOTE: It is likely that not all of these options apply to your specific VM, foll
  
 .NOTES
 	Author: Siebert Timmermans
-	Last Updated: 06/03/2017
-    Version 1.0   
+	Last Updated: 27/03/2017
+    Version 1.1 - Updated User Experience and logging. 
 
     DO NOT FORGET THE CREDENTIAL/KEY DECLARATION IN THE SCRIPT BELOW
 #>
@@ -110,11 +110,42 @@ workflow VMScheduledScaler
     InlineScript { 
 
 
+# Introduction Output part 1
+    $VERSION = "1.1"
+    $currentTime = (Get-Date).AddHours(2)#.ToUniversalTime()
+    Write-Output "Runbook started. Version: $VERSION" 
+    Write-Output "Schedule received for current time in CET [$($currentTime.ToString("dddd dd MMM yyyy HH:mm:ss"))]. Running job..."
+
 # Credentials and Subscription ID declaration, DO NOT FORGET TO FILL IN THESE!
-    $Cred = Get-AutomationPSCredential -Name 'enter your Credentials Asset name here inbetween the apostrophes'
+    $Cred = Get-AutomationPSCredential -Name 'siebertsCredentials'
     $null = Add-AzureRmAccount -Credential $Cred -ErrorAction Stop
-	$SubId = Get-AutomationVariable -Name 'enter your subscription-ID Asset name here inbetween the aposthophes'
+	$SubId = Get-AutomationVariable -Name 'AzureKey'
 	$null = Set-AzureRmContext -SubscriptionId $SubId -ErrorAction Stop
+
+# Introduction Output part 2
+    if($SubId.length -gt 0) 
+        { 
+            Write-Output "Specified subscription ID: [$SubID]" 
+        } 
+    else 
+        { 
+            throw "No subscription name was specified. Create a subscription Variable Asset and add it to the Runbook in the declaration variables manually." 
+        } 
+
+    if($Cred -ne $null) 
+            { 
+                Write-Output "Attempting to authenticate as: [$($Cred.UserName)]" 
+            } 
+            else 
+            { 
+                throw "No automation credential name was specified. Create a Credential Asset and add it to the Runbook in the declaration variables manually." 
+            }
+
+    Write-Output "Specified VM name: [$Using:VirtualMachineName]"
+    Write-Output "Specified VM Resource Group: [$Using:ResourceGroup]"
+    Write-Output "Desired VM size: [$Using:VMSize]"
+    Write-Output "`n----------------------------------------------------------------------"
+
 
 # Check if specified VM can be found
     try {
@@ -127,13 +158,14 @@ workflow VMScheduledScaler
 # Output current VM Size
     $currentVMSize = $vm.HardwareProfile.vmSize
     
-    Write-Output "`nFound the specified Virtual Machine: $VmName"
+    Write-Output "`nFound the specified Virtual Machine: $Using:VirtualMachineName"
     Write-Output "Current size: $currentVMSize"
 
 # Change to new VM Size and report
 	$newVMSize = $Using:VMSize
     
         Write-Output "`nNew size will be: $newVMSize"
+        Write-Output "`n----------------------------------------------------------------------"
             
         $vm.HardwareProfile.VmSize = $newVMSize
         Update-AzureRmVm -VM $vm -ResourceGroupName $Using:ResourceGroup
@@ -141,10 +173,15 @@ workflow VMScheduledScaler
         $updatedVm = Get-AzureRmVm -ResourceGroupName $Using:ResourceGroup -VMName $Using:VirtualMachineName
         $updatedVMSize = $updatedVm.HardwareProfile.vmSize
         
-        Write-Output "`nSize updated to: $updatedVMSize"	
+        Write-Output "`n----------------------------------------------------------------------"
+        Write-Output "`nSize updated to: $updatedVMSize"
+
 
 
     
+
     }
 
 }
+
+
